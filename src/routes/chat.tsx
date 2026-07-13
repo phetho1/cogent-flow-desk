@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,8 +15,10 @@ import {
   User,
   Pencil,
   Check,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { chatCompletion } from "@/lib/chat.functions";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
