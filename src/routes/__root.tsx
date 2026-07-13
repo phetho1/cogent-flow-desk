@@ -83,21 +83,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nova AI — Productivity Suite for modern teams" },
+      { title: "Dashboard — Nova AI" },
       {
         name: "description",
         content:
-          "Nova AI is a modern productivity platform with an AI task planner, research assistant, and chatbot to help teams ship faster.",
+          "Your AI productivity command center.",
       },
       { name: "author", content: "Nova AI" },
-      { property: "og:title", content: "Nova AI — Productivity Suite" },
+      { property: "og:title", content: "Dashboard — Nova AI" },
       {
         property: "og:description",
         content:
-          "Plan tasks, research topics, and chat with AI — a modern productivity platform for teams.",
+          "Your AI productivity command center.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Dashboard — Nova AI" },
+      { name: "twitter:description", content: "Your AI productivity command center." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/362770a0-6ff4-44ab-a0f4-485ca72d2d5e/id-preview-110efcad--46f85c5e-0f6d-4df2-add6-1960817270c0.lovable.app-1783946567925.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/362770a0-6ff4-44ab-a0f4-485ca72d2d5e/id-preview-110efcad--46f85c5e-0f6d-4df2-add6-1960817270c0.lovable.app-1783946567925.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
