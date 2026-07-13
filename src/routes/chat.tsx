@@ -213,8 +213,8 @@ function Chat() {
               rows={1}
               className="min-h-[40px] resize-none border-0 bg-transparent p-2 shadow-none focus-visible:ring-0"
             />
-            <Button onClick={() => send()} size="icon" className="shrink-0" aria-label="Send">
-              <Send className="h-4 w-4" />
+            <Button onClick={() => send()} size="icon" className="shrink-0" aria-label="Send" disabled={loading}>
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
           </div>
         </div>
