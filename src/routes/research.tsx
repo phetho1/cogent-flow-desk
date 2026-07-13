@@ -106,6 +106,7 @@ function Research() {
             {templates.map((t) => (
               <button
                 key={t}
+                onClick={() => setTopic(t)}
                 className="rounded-full border bg-muted/60 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent hover:text-accent-foreground"
               >
                 {t}
