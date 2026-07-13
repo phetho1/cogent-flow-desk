@@ -24,14 +24,9 @@ export const chatCompletion = createServerFn({ method: "POST" })
     const { text } = await generateText({
       model,
       maxOutputTokens: 4096,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are Nova, a helpful AI productivity assistant. Provide complete, thorough answers. Use markdown formatting when helpful. Never truncate instructions or steps — always finish your thought.",
-        },
-        ...data.messages,
-      ],
+      system:
+        "You are Nova, a helpful AI productivity assistant. Provide complete, thorough answers. Use markdown formatting when helpful. Never truncate instructions or steps — always finish your thought.",
+      messages: data.messages,
     });
 
     return { text };
