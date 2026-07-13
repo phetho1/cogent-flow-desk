@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, FileDown, Link2, BookOpen, Wand2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { generateResearchBrief } from "@/lib/research.functions";
 
 export const Route = createFileRoute("/research")({
   head: () => ({
@@ -47,6 +49,27 @@ function Research() {
   const [summary, setSummary] = useState(initialSummary);
   const [notes, setNotes] = useState("- Highlight opportunity for verticalized workflows.\n- Ask sales for enterprise anecdotes.");
   const [loading, setLoading] = useState(false);
+  const runBrief = useServerFn(generateResearchBrief);
+
+  const handleGenerate = async () => {
+    if (!topic.trim()) {
+      toast.error("Enter a research topic first");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await runBrief({ data: { topic } });
+      setSummary(res.summary);
+      toast.success("New brief generated");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to generate brief";
+      if (msg.includes("429")) toast.error("Rate limit reached. Try again shortly.");
+      else if (msg.includes("402")) toast.error("AI credits exhausted. Please upgrade to continue.");
+      else toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
@@ -75,16 +98,7 @@ function Research() {
                 placeholder="e.g. Emerging trends in vertical SaaS"
               />
             </div>
-            <Button
-              onClick={() => {
-                setLoading(true);
-                setTimeout(() => {
-                  setLoading(false);
-                  toast.success("New brief generated");
-                }, 800);
-              }}
-              disabled={loading}
-            >
+            <Button onClick={handleGenerate} disabled={loading}>
               <Wand2 className="mr-1.5 h-4 w-4" /> {loading ? "Researching…" : "Generate brief"}
             </Button>
           </div>
@@ -92,6 +106,7 @@ function Research() {
             {templates.map((t) => (
               <button
                 key={t}
+                onClick={() => setTopic(t)}
                 className="rounded-full border bg-muted/60 px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:bg-accent hover:text-accent-foreground"
               >
                 {t}
