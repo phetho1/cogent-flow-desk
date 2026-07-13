@@ -52,34 +52,50 @@ function Chat() {
   const [input, setInput] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
+  const [loading, setLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const runChat = useServerFn(chatCompletion);
+
+  const callAi = async (history: Msg[]) => {
+    setLoading(true);
+    try {
+      const { text } = await runChat({
+        data: {
+          messages: history.map((m) => ({
+            role: m.role === "ai" ? ("assistant" as const) : ("user" as const),
+            content: m.text,
+          })),
+        },
+      });
+      setMessages((m) => [...m, { id: crypto.randomUUID(), role: "ai", text }]);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Something went wrong";
+      if (msg.includes("429")) toast.error("Rate limit reached. Try again shortly.");
+      else if (msg.includes("402")) toast.error("AI credits exhausted. Please add credits.");
+      else toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const send = (text?: string) => {
     const t = (text ?? input).trim();
-    if (!t) return;
+    if (!t || loading) return;
     const userMsg: Msg = { id: crypto.randomUUID(), role: "user", text: t };
-    setMessages((m) => [...m, userMsg]);
+    const next = [...messages, userMsg];
+    setMessages(next);
     setInput("");
-    setTimeout(() => {
-      setMessages((m) => [
-        ...m,
-        {
-          id: crypto.randomUUID(),
-          role: "ai",
-          text: `Great question. Here's a first pass:\n\n"${t}" — let's break it into three parts and I'll draft each.`,
-        },
-      ]);
-    }, 500);
+    void callAi(next);
   };
 
   const regenerate = (id: string) => {
-    setMessages((m) =>
-      m.map((msg) =>
-        msg.id === id ? { ...msg, text: msg.text + "\n\n_(Regenerated with a fresher angle.)_" } : msg
-      )
-    );
-    toast.success("Response regenerated");
+    const idx = messages.findIndex((m) => m.id === id);
+    if (idx <= 0) return;
+    const history = messages.slice(0, idx);
+    setMessages(history);
+    void callAi(history);
   };
+
 
   const startEdit = (m: Msg) => {
     setEditingId(m.id);
