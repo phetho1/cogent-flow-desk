@@ -24,7 +24,7 @@ export const Route = createFileRoute("/chat")({
       { name: "description", content: "Conversational AI to brainstorm, draft, and refine." },
     ],
   }),
-  component: Chat;
+  component: Chat,
 });
 
 type Msg = { id: string; role: "user" | "ai"; text: string };
